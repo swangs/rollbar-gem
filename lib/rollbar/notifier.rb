@@ -244,7 +244,7 @@ module Rollbar
         begin
           if payload.is_a?(String)
             # The final payload has already been built.
-            send_body(payload)
+            send_body(payload, configuration.access_token)
           else
             item = Item.build_with(payload,
                                    :notifier => self,
@@ -554,15 +554,15 @@ module Rollbar
         return
       end
 
-      send_body(body)
+      send_body(body, item['access_token'])
     end
 
-    def send_body(body)
+    def send_body(body, access_token)
       log_info '[Rollbar] Sending json'
 
       uri = URI.parse(configuration.endpoint)
 
-      handle_response(do_post(uri, body, configuration.access_token))
+      handle_response(do_post(uri, body, access_token))
     end
 
     def do_post(uri, body, access_token)
